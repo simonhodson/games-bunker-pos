@@ -6,12 +6,14 @@ import { InputWindow } from './views/input-window';
 import ItemData from '../../models/item-data';
 import { ListItem } from './views/ListItem';
 import { getStockItem, getStock } from '../../services/services';
-import { stringify } from 'querystring';
+import { TotalDisplay } from './views/total-display';
+import { ActionButton } from './views/action-button';
 
 interface IState {
     listItems: ItemData[] | [];
     currentTotal: number;
     displayTotal: string;
+    willCheckout: boolean;
 }
 
 
@@ -22,7 +24,8 @@ class Application extends React.Component<{}, IState, {}> {
         this.state = {
             listItems: [],
             currentTotal: 0,
-            displayTotal: '0.00'
+            displayTotal: '0.00',
+            willCheckout: true,
         }
         this.renderListItem = this.renderListItem.bind(this);
     }
@@ -75,6 +78,15 @@ class Application extends React.Component<{}, IState, {}> {
         ));
     }
 
+    onClickDiscount = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (confirm('Do you wish to apply discount?')) {
+            console.log('>>>>>>>>>>>>>>>>>>>> OK');
+        } else {
+            console.log('>>>>>>>>>>>>>>>>>>>> NOPE')
+        }
+    };
+
     renderListItem() {
         return this.state.listItems.map(item => {
             return (
@@ -100,7 +112,13 @@ class Application extends React.Component<{}, IState, {}> {
                     {this.renderListItem()}
                 </div>
                 <div className='rightPane'>
-                    <h3>{`Total: ${this.state.displayTotal}`}</h3>
+                    <ActionButton
+                        title='membership discount'
+                        type='discount'
+                        onClick={this.onClickDiscount}
+                        willCheckout={this.state.willCheckout}
+                    />
+                    <TotalDisplay total={this.state.displayTotal}/>
                 </div>
             </div>
         );

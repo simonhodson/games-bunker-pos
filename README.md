@@ -22,8 +22,7 @@ Menubar can be toggled by pressing `ALT` key
 
 ## Core Features
 
-- 📐 Custom Window & Titlebar with Menus
-- 🌟 Electron
+- 📐 Custom Window & Titlebar with Menus ,
 - 🌀 TypeScript
 - ⚛️ React
 - 🛶 LESS Loader

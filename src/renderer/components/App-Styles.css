@@ -16,8 +16,11 @@
     width: 85%;
     min-height: 100px;
     border-radius: 7px;
+    border-width: 1px;
+    border-color: #1e2d31;
     margin-bottom: 15px;
-    background-color: green;
+    background-color: whitesmoke;
+    color: #000;
     padding: 5px 15px 5px 15px;
 }
 
@@ -31,4 +34,55 @@
     font-weight: bold;
     display: inline;
     float: right;
+}
+
+#totalDisplayWrapper {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    height: 100px;
+    padding-left: 1em;
+    padding-bottom: 1em;
+    padding-top: 0.5em;
+    bottom: 0;
+    box-sizing: border-box;
+}
+
+.totalRows {
+    flex-direction: row;
+}
+
+.totalTextColor {
+    color: black;
+    margin: 0;
+}
+
+#totalText {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.actionButton {
+    display: flex;
+    flex-direction: row;
+    width: 300px;
+    height: 60px;
+    border-radius: 5    px;
+    background-color: #ff4943;
+    justify-content: center;
+    align-items: center;
+    transition: all .1000s ease-in-out;
+}
+
+.actionButtonTitle {
+    color: #fff;
+    line-height: 1.5em;
+    letter-spacing: 0.1em;
+}
+
+.actionButton:hover {
+    background-color: black;
 }
