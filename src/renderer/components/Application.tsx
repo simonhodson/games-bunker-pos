@@ -7,13 +7,15 @@ import ItemData from '../../models/item-data';
 import { ListItem } from './views/ListItem';
 import { getStockItem, getStock } from '../../services/services';
 import { TotalDisplay } from './views/total-display';
-import { ActionButton } from './views/action-button';
+import { CheckoutButton } from './views/checkout-button';
+import { DiscountWindow } from './views/discount-window';
 
 interface IState {
     listItems: ItemData[] | [];
     currentTotal: number;
     displayTotal: string;
     willCheckout: boolean;
+    showDiscountWindow: boolean;
 }
 
 
@@ -26,6 +28,7 @@ class Application extends React.Component<{}, IState, {}> {
             currentTotal: 0,
             displayTotal: '0.00',
             willCheckout: true,
+            showDiscountWindow: false,
         }
         this.renderListItem = this.renderListItem.bind(this);
     }
@@ -80,11 +83,7 @@ class Application extends React.Component<{}, IState, {}> {
 
     onClickDiscount = (e: React.MouseEvent) => {
         e.preventDefault();
-        if (confirm('Do you wish to apply discount?')) {
-            console.log('>>>>>>>>>>>>>>>>>>>> OK');
-        } else {
-            console.log('>>>>>>>>>>>>>>>>>>>> NOPE')
-        }
+        this.setState({ showDiscountWindow: true });
     };
 
     renderListItem() {
@@ -112,14 +111,17 @@ class Application extends React.Component<{}, IState, {}> {
                     {this.renderListItem()}
                 </div>
                 <div className='rightPane'>
-                    <ActionButton
-                        title='membership discount'
-                        type='discount'
-                        onClick={this.onClickDiscount}
-                        willCheckout={this.state.willCheckout}
-                    />
+                    <CheckoutButton onClick={this.onClickDiscount} />
                     <TotalDisplay total={this.state.displayTotal}/>
                 </div>
+                {this.state.showDiscountWindow && (
+                    <DiscountWindow
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.setState({showDiscountWindow: false });
+                        }}
+                    />
+                )}
             </div>
         );
     }

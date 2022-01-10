@@ -1,9 +1,9 @@
-.inputWindow {
+indow {
     display: flex;
     justify-content: center;
     align-items: center;
     width: '100%';
-}
+}.inputW
 
 #inputText {
     color: green
@@ -85,4 +85,11 @@
 
 .actionButton:hover {
     background-color: black;
+}
+
+.discountWindow {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background-color: #ff4943;
 }
