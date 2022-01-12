@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { hot } from 'react-hot-loader';
 import logo from '@assets/images/logo.png';
 import './Application.less';
-import { InputWindow } from './views/input-window';
+import { InputWindow } from './components/input-window';
 import ItemData from '../../models/item-data';
-import { ListItem } from './views/ListItem';
+import { ListItem } from './components/ListItem';
 import { getStockItem, getStock } from '../../services/services';
-import { TotalDisplay } from './views/total-display';
-import { CheckoutButton } from './views/checkout-button';
-import { DiscountWindow } from './views/discount-window';
+import { TotalDisplay } from './components/total-display';
+import { CheckoutButton } from './components/checkout-button';
+import { DiscountWindow } from './components/discount-window';
 
 interface IState {
     listItems: ItemData[] | [];
@@ -81,7 +81,26 @@ class Application extends React.Component<{}, IState, {}> {
         ));
     }
 
-    onClickDiscount = (e: React.MouseEvent) => {
+    onApplyDiscount = (toApply: boolean, percentage?: number): void => {
+        if (!toApply) {
+            this.setState({ showDiscountWindow: false });
+            // Run next step of checkout
+            return;
+        }
+        if (percentage) {
+            const newTotal = this.state.currentTotal - (this.state.currentTotal * (percentage / 100));
+            this.setState({
+                currentTotal: newTotal,
+                displayTotal: String(newTotal.toFixed(2)),
+                showDiscountWindow: false
+            });
+            // Run next step of checkout
+            return;
+        }
+
+    }
+
+    onClickShowDiscount = (e: React.MouseEvent) => {
         e.preventDefault();
         this.setState({ showDiscountWindow: true });
     };
@@ -111,15 +130,12 @@ class Application extends React.Component<{}, IState, {}> {
                     {this.renderListItem()}
                 </div>
                 <div className='rightPane'>
-                    <CheckoutButton onClick={this.onClickDiscount} />
+                    <CheckoutButton onClick={this.onClickShowDiscount} />
                     <TotalDisplay total={this.state.displayTotal}/>
                 </div>
                 {this.state.showDiscountWindow && (
                     <DiscountWindow
-                        onClick={(e) => {
-                            e.preventDefault()
-                            this.setState({showDiscountWindow: false });
-                        }}
+                        apply={this.onApplyDiscount}
                     />
                 )}
             </div>
