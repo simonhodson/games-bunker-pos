@@ -20,20 +20,21 @@ export const ListItem: React.FC<Props> = ({
 })  => {
     return (
         <div className='listItemWrapper' onClick={() => onClick(uid)} >
-            <h3 className='blockIem'>{itemName}</h3>
-            <p className='blockIem' > {itemDescription}</p>
-            <div style={{ flexDirection: 'row' }}>
-                <p style={{ display: 'inline' }}>Item Code: </p>
-                <p style={{ display: 'inline' }}>{itemCode}</p>
-                {/* <div style={{display: 'inline' }} /> */}
+            <div className='listRow'>
+                <p id='listTitleText'>{itemName}</p>
+            </div>
+            <div className='listRow'>
+                <p id='listDescText' >{itemDescription}</p>
+            </div>
+            <div className='listBottomRow'>
+                <div style={{ display: 'inline-flex', flexDirection: 'row'}}>
+                    <p className='listBottomText' style={{paddingRight: '10px' }}>Item Code:</p>
+                    <p className='listBottomText'>{`${itemCode}`}</p>
+                </div>
+                {/* <div id='listBlank'/> */}
                 <p id='priceText'>{itemPrice}</p>
             </div>
             
         </div>
     );
 }
-
-// uuid	"12345"
-// itemName	"Blue paint"
-// itemDescription	"35ml bottle"
-// itemPrice	4.45

@@ -1,0 +1,1 @@
+export type ActionTypes = 'discount' | 'editList' | 'checkout' | 'complete';

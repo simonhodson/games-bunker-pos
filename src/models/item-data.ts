@@ -7,7 +7,7 @@ export default class ItemData {
 
     constructor(
         barcodeId: string,
-        itemData: any,
+        itemData: IStockItem,
     ) {
         this.barcodeId = barcodeId;
         this.itemData = itemData;

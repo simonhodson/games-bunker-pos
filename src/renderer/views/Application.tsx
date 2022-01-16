@@ -7,8 +7,11 @@ import ItemData from '../../models/item-data';
 import { ListItem } from './components/ListItem';
 import { getStockItem, getStock } from '../../services/services';
 import { TotalDisplay } from './components/total-display';
-import { CheckoutButton } from './components/checkout-button';
 import { DiscountWindow } from './components/discount-window';
+import { UniqueListItem } from './components/UniqueListItem';
+import { GenericButton } from './components/generic-button';
+import { ActionTypes } from '../../ts-structures/types';
+import { Banner } from './components/banner';
 
 interface IState {
     listItems: ItemData[] | [];
@@ -16,8 +19,11 @@ interface IState {
     displayTotal: string;
     willCheckout: boolean;
     showDiscountWindow: boolean;
+    disbaleListActions: boolean;
+    appliedDiscountValue: number | null;
+    appliedDiscountPercentage: number | null;
+    showReciept: boolean;
 }
-
 
 class Application extends React.Component<{}, IState, {}> {
 
@@ -27,19 +33,32 @@ class Application extends React.Component<{}, IState, {}> {
             listItems: [],
             currentTotal: 0,
             displayTotal: '0.00',
-            willCheckout: true,
+            willCheckout: false,
             showDiscountWindow: false,
+            disbaleListActions: false,
+            appliedDiscountValue: null,
+            appliedDiscountPercentage: null,
+            showReciept: false
         }
         this.renderListItem = this.renderListItem.bind(this);
     }
 
+    async componentDidMount(): Promise<void> {
+        try {
+            await getStock();
+        }
+        catch(error) {
+            console.error(String(error));
+        }
+    }
 
-    onSubmitItem = async (itemId: string) => {
+
+    onSubmitItem = (itemId: string) => {
+        if (this.state.disbaleListActions) return;
+
         const currentItemsInList = this.state.listItems ?? [];
         // Consider making an object holding all the required data for an item on it's return;
         // API to use item number to get back item data
-        try {
-            await getStock();
 
             const newRawItem = getStockItem(itemId);
             if (!newRawItem) return; // <--- Add display result here
@@ -57,17 +76,15 @@ class Application extends React.Component<{}, IState, {}> {
                 }
             ));
             return;
-        } catch (error) {
-            console.error(String(error));
-        }
-        
     }
 
     onRemoveListItem = (itemCode: string): void => {
+        if (this.state.disbaleListActions) return;
+
         const itemData = this.state.listItems.find(itemToRemove => {
             return itemToRemove.getListId === itemCode;
-        })
-        console.log(itemData)
+        });
+
         const tempList = this.state.listItems.filter(item => {
             return item.getListId !== itemCode;
         });
@@ -87,22 +104,54 @@ class Application extends React.Component<{}, IState, {}> {
             // Run next step of checkout
             return;
         }
+
         if (percentage) {
             const newTotal = this.state.currentTotal - (this.state.currentTotal * (percentage / 100));
-            this.setState({
+            this.setState(prevState => ({
                 currentTotal: newTotal,
                 displayTotal: String(newTotal.toFixed(2)),
-                showDiscountWindow: false
-            });
+                showDiscountWindow: false,
+                appliedDiscountValue: prevState.currentTotal - newTotal,
+                appliedDiscountPercentage: percentage,
+            }));
             // Run next step of checkout
             return;
         }
 
     }
 
-    onClickShowDiscount = (e: React.MouseEvent) => {
+    
+    onClickMarshalling = (e: React.MouseEvent, type: ActionTypes) => {
         e.preventDefault();
-        this.setState({ showDiscountWindow: true });
+
+        switch (type) {
+            case 'checkout':
+                if (this.state.currentTotal <= 0) return;
+                this.setState({
+                    showDiscountWindow: true,
+                    disbaleListActions: true,
+                    willCheckout: true,
+                });
+                break;
+            case 'editList':
+                // Remove discount applied then
+                this.setState({ disbaleListActions: false });
+                if (this.state.appliedDiscountValue) {
+                    this.setState( prevState => ({
+                        currentTotal: prevState.currentTotal + prevState.appliedDiscountValue,
+                        displayTotal: (prevState.currentTotal + prevState.appliedDiscountValue).toFixed(2),
+                        appliedDiscountValue: null,
+                        appliedDiscountPercentage: null
+                    }));
+                }
+                break;
+            case 'complete':
+                this.setState({
+                    showReciept: true
+                })
+                break;
+        }
+        
     };
 
     renderListItem() {
@@ -123,15 +172,40 @@ class Application extends React.Component<{}, IState, {}> {
 
     render() {
         return (
-            <div id='gbpos'>
+            <div id='main'>
                 <div className='leftPane'>
                     <InputWindow onSubmitProp={this.onSubmitItem}/>
                     <div style={{ marginTop: '15px' }}/>
+                    {this.state.appliedDiscountPercentage &&
+                        <Banner title={`Discount applied ${this.state.appliedDiscountPercentage}%`}/>
+                    }
                     {this.renderListItem()}
                 </div>
                 <div className='rightPane'>
-                    <CheckoutButton onClick={this.onClickShowDiscount} />
                     <TotalDisplay total={this.state.displayTotal}/>
+                    <div style={{height: '1.7em'}} />
+                    <GenericButton
+                        onClick={this.onClickMarshalling}
+                        title='Checkout'
+                        type='checkout'
+                    />
+                    {this.state.appliedDiscountValue &&
+                        <GenericButton
+                            onClick={this.onClickMarshalling}
+                            title='edit list'
+                            type='editList'
+                        />
+                    }
+                    {this.state.willCheckout && (
+                        <>
+                            <div style={{height: '2.7em'}} />
+                            <GenericButton
+                                onClick={this.onClickMarshalling}
+                                title='Complete Transaction'
+                                type='complete'
+                            />
+                        </>
+                    )}
                 </div>
                 {this.state.showDiscountWindow && (
                     <DiscountWindow
