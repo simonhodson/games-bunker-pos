@@ -47,8 +47,8 @@ export const DiscountWindow: React.FC<Props> = ({ apply }) => {
                 <p className='discountBodyText'>{`Current default discount ${discount}%`}</p>
             </div>
             <div id='discountButtonRow'>
-                <SmallButton title='no' onClick={(e) => onCancel(e)} type="cancel" /> 
-                <SmallButton title='yes' onClick={(e) => onApply(e)} type="apply" />
+                <SmallButton title='no' onClick={(e) => onCancel(e)} /> 
+                <SmallButton title='yes' onClick={(e) => onApply(e)} />
                 
             </div> 
         </div>

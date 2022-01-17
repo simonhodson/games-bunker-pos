@@ -192,3 +192,33 @@ indow {
       align-items: center;
 
   }
+
+  .receiptWindow {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    background-color: #ff4943;
+}
+/* 
+#discountButtonRow {
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#discountBody {
+    height: 100%;
+    flex-direction: column;
+    padding: 20px;
+    color: #fff;
+}
+
+.discountBodyText {
+    color: #fff;
+    line-height: 1.5em;
+    letter-spacing: 0.1em;
+    font-size: 1em;
+} */

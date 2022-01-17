@@ -4,14 +4,14 @@ import logo from '@assets/images/logo.png';
 import './Application.less';
 import { InputWindow } from './components/input-window';
 import ItemData from '../../models/item-data';
-import { ListItem } from './components/ListItem';
-import { getStockItem, getStock } from '../../services/services';
+import { ListItem } from './components/list-item';
+import { getStockItem, getStock, postTransaction, buildStockAdjustmentRecord } from '../../services/services';
 import { TotalDisplay } from './components/total-display';
 import { DiscountWindow } from './components/discount-window';
-import { UniqueListItem } from './components/UniqueListItem';
 import { GenericButton } from './components/generic-button';
-import { ActionTypes } from '../../ts-structures/types';
+import { ActionTypes, TransactionState } from '../../ts-structures/types';
 import { Banner } from './components/banner';
+import { ReceiptWindow } from './components/receipt-window';
 
 interface IState {
     listItems: ItemData[] | [];
@@ -23,6 +23,7 @@ interface IState {
     appliedDiscountValue: number | null;
     appliedDiscountPercentage: number | null;
     showReciept: boolean;
+    transactionState: TransactionState;
 }
 
 class Application extends React.Component<{}, IState, {}> {
@@ -38,7 +39,8 @@ class Application extends React.Component<{}, IState, {}> {
             disbaleListActions: false,
             appliedDiscountValue: null,
             appliedDiscountPercentage: null,
-            showReciept: false
+            showReciept: false,
+            transactionState: 'pending',
         }
         this.renderListItem = this.renderListItem.bind(this);
     }
@@ -51,7 +53,6 @@ class Application extends React.Component<{}, IState, {}> {
             console.error(String(error));
         }
     }
-
 
     onSubmitItem = (itemId: string) => {
         if (this.state.disbaleListActions) return;
@@ -146,13 +147,58 @@ class Application extends React.Component<{}, IState, {}> {
                 }
                 break;
             case 'complete':
-                this.setState({
-                    showReciept: true
-                })
+                void this.onCompleteTransaction()
                 break;
         }
         
     };
+
+    onCompleteTransaction = async (): Promise<void> => {
+        this.setState({
+            showReciept: true,
+            transactionState: 'sending'
+        })
+        // Whatever the response send api
+        await postTransaction({
+            orderNumber: 1,
+            itemList: buildStockAdjustmentRecord(this.state.listItems),
+            transactionTimeStamp: new Date()
+        });
+
+        this.setState({
+            transactionState: 'completed'
+        });
+    }
+
+    onPrintReceipt(receipt: boolean): void {
+        if (receipt) {
+            // Begin a CSV process with the list
+            this.setState({ transactionState: 'printing' });
+            setTimeout(() => {
+                this.resetForNewTransaction()
+            }, 3000)
+        } else {
+                    // RESET ALL STATE
+        this.resetForNewTransaction();
+        }
+
+
+    }
+
+    resetForNewTransaction = (): void => {
+        this.setState({
+            listItems: [],
+            currentTotal: 0,
+            displayTotal: '0.00',
+            willCheckout: false,
+            showDiscountWindow: false,
+            disbaleListActions: false,
+            appliedDiscountValue: null,
+            appliedDiscountPercentage: null,
+            showReciept: false,
+            transactionState: 'pending',
+        });
+    }
 
     renderListItem() {
         return this.state.listItems.map(item => {
@@ -210,6 +256,12 @@ class Application extends React.Component<{}, IState, {}> {
                 {this.state.showDiscountWindow && (
                     <DiscountWindow
                         apply={this.onApplyDiscount}
+                    />
+                )}
+                {this.state.showReciept && (
+                    <ReceiptWindow
+                        receiptAction={(receipt) => this.onPrintReceipt(receipt)}
+                        transactionState={this.state.transactionState}
                     />
                 )}
             </div>
