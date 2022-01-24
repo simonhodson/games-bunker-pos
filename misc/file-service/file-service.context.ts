@@ -1,13 +1,10 @@
 import { ipcRenderer } from 'electron';
 
 const fileServiceContext = {
-  writeFile(txt: string) {
-    ipcRenderer.invoke('write-file', txt)
-  },
-  test() {
-      console.log('PRE INVOKE ------------- >');
-      ipcRenderer.invoke('test')
+  async writeStockFile(data: any) {
+    return await ipcRenderer.invoke('write-stock-file', data)
   }
+
 };
 
 export type FileServiceContextApi = typeof fileServiceContext;

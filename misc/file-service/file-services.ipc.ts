@@ -1,29 +1,29 @@
-// const fs = require('fs');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+
 import { ipcMain, shell } from 'electron';
 
 export const registerFileServicesIpc = () => {
 
-    ipcMain.handle('write-file', async  (event, arg) => {
-        console.log('>>>>>>>>>>>>>>>>>>>>> ...', arg);
-        return await writeFile();
+    ipcMain.handle('write-stock-file', async  (event, data: any) => {
+        const result = await writeStockFile(data);
+        return result;
     });
 
-    ipcMain.handle('test', () => {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> TESTING <<<<<<<<<<<<<<<<<<<<<<<')
-        test();
-    })
 }
 
-const writeFile = (): Promise<void> => {
-    console.log('>>>>>>>>>>>>>>>>>>>> I AM WRITING A FILE');
-    return new Promise((res, rej) => {
-        setTimeout(() =>{
-            return res()
-        }, 3000)
-    })
+const writeStockFile = (data: any): Promise<void> => {
+    const url = path.join(os.homedir(), 'Desktop/stock.json');
 
-}
-
-const test = () => {
-    console.log('>>>>>>>>>>>> inner test function <<<<<<<<<<<<<');
-}
+    return new Promise((resolve, reject) => {
+        fs.writeFile(
+            url,
+            JSON.stringify(data),
+            { flag: 'a+'},
+            (err) => {
+                if (err) { reject(err) };
+                resolve();
+        });
+    }
+)}

@@ -1,4 +1,4 @@
-import { IStockItem } from '../services/services';
+import { IStockItem } from "../ts-structures/interfaces";
 
 export default class ItemData {
     public barcodeId: string;

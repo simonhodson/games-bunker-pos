@@ -21,10 +21,10 @@ interface IState {
     displayTotal: string;
     willCheckout: boolean;
     showDiscountWindow: boolean;
-    disbaleListActions: boolean;
+    disableListActions: boolean;
     appliedDiscountValue: number | null;
     appliedDiscountPercentage: number | null;
-    showReciept: boolean;
+    showReceipt: boolean;
     transactionState: TransactionState;
 }
 
@@ -39,10 +39,10 @@ class Application extends React.Component<{}, IState, {}> {
             displayTotal: '0.00',
             willCheckout: false,
             showDiscountWindow: false,
-            disbaleListActions: false,
+            disableListActions: false,
             appliedDiscountValue: null,
             appliedDiscountPercentage: null,
-            showReciept: false,
+            showReceipt: false,
             transactionState: 'pending',
         }
         this.renderListItem = this.renderListItem.bind(this);
@@ -50,13 +50,17 @@ class Application extends React.Component<{}, IState, {}> {
 
     async componentDidMount(): Promise<void> {
         try {
-            await getStock();
-            await fileContext.writeFile('Text to be written');
-            this.onLoaded();
-            
+            const stockList = await getStock();
+            // TODO If not stock list, raise and error to update.
+            if (!stockList) {
+                console.log('STOCK LIST NOT AVAILABLE');
+            } else {
+                await fileContext.writeStockFile(stockList);
+                this.onLoaded(); 
+            }
         }
         catch(error) {
-            console.error(String(error));
+            console.error(`@Application: On Mount ${String(error)}`);
         }
     }
 
@@ -65,7 +69,7 @@ class Application extends React.Component<{}, IState, {}> {
     }
 
     onSubmitItem = (itemId: string) => {
-        if (this.state.disbaleListActions) return;
+        if (this.state.disableListActions) return;
 
         const currentItemsInList = this.state.listItems ?? [];
         // Consider making an object holding all the required data for an item on it's return;
@@ -90,7 +94,7 @@ class Application extends React.Component<{}, IState, {}> {
     }
 
     onRemoveListItem = (itemCode: string): void => {
-        if (this.state.disbaleListActions) return;
+        if (this.state.disableListActions) return;
 
         const itemData = this.state.listItems.find(itemToRemove => {
             return itemToRemove.getListId === itemCode;
@@ -140,13 +144,13 @@ class Application extends React.Component<{}, IState, {}> {
                 if (this.state.currentTotal <= 0) return;
                 this.setState({
                     showDiscountWindow: true,
-                    disbaleListActions: true,
+                    disableListActions: true,
                     willCheckout: true,
                 });
                 break;
             case 'editList':
                 // Remove discount applied then
-                this.setState({ disbaleListActions: false });
+                this.setState({ disableListActions: false });
                 if (this.state.appliedDiscountValue) {
                     this.setState( prevState => ({
                         currentTotal: prevState.currentTotal + prevState.appliedDiscountValue,
@@ -165,7 +169,7 @@ class Application extends React.Component<{}, IState, {}> {
 
     onCompleteTransaction = async (): Promise<void> => {
         this.setState({
-            showReciept: true,
+            showReceipt: true,
             transactionState: 'sending'
         })
         // Whatever the response send api
@@ -202,10 +206,10 @@ class Application extends React.Component<{}, IState, {}> {
             displayTotal: '0.00',
             willCheckout: false,
             showDiscountWindow: false,
-            disbaleListActions: false,
+            disableListActions: false,
             appliedDiscountValue: null,
             appliedDiscountPercentage: null,
-            showReciept: false,
+            showReceipt: false,
             transactionState: 'pending',
         });
     }
@@ -278,7 +282,7 @@ class Application extends React.Component<{}, IState, {}> {
                         apply={this.onApplyDiscount}
                     />
                 )}
-                {this.state.showReciept && (
+                {this.state.showReceipt && (
                     <ReceiptWindow
                         receiptAction={(receipt) => this.onPrintReceipt(receipt)}
                         transactionState={this.state.transactionState}

@@ -1,31 +1,16 @@
 import ItemData from '@src/models/item-data';
 import axios from 'axios';
+import { IStockItem, IStockList, SalesTransaction } from '../ts-structures/interfaces';
 
 const url = 'http://localhost:3001/';
 const postUrl = 'http//localhost:3001/post-item'
 
-export interface IStockItem {
-    uuid: string;
-    itemName: string;
-    itemDescription: string;
-    itemPrice: string;
-}
 
-export interface SalesTransaction {
-    orderNumber: number;
-    itemList: ItemData[];
-    transactionTimeStamp: Date;
-}
-
-let stockArray: IStockItem[] | undefined = undefined;
-
-
-export function getStock(): Promise<void> {
+export function getStock(): Promise<IStockList> {
     return new Promise((resolve, reject) => {
         axios.get(url)
         .then(res => {
-            stockArray = res.data;
-            resolve();
+            resolve(res.data);
         })
         .catch(err => {
             console.log(err)
@@ -35,6 +20,8 @@ export function getStock(): Promise<void> {
 }
 
 export function getStockItem(barcode: string): IStockItem | undefined {
+    // replace with read from disk service
+    const stockArray: IStockItem[] = [];
     if (stockArray.length > 0) {
         return stockArray.find(item => item.uuid === barcode);
     } else {
@@ -46,7 +33,6 @@ export function postTransaction(order: SalesTransaction): Promise<void> {
     return new Promise((resolve, reject) => {
         axios.get(url) // <--- POST HERE
         .then(res => {
-            stockArray = res.data;
             setTimeout(() => {
                 resolve();
             }, 3000);
