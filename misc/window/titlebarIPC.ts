@@ -14,7 +14,17 @@ import { BrowserWindow, ipcMain, shell } from 'electron';
 
 export const registerTitlebarIpc = (mainWindow: BrowserWindow) => {
   ipcMain.handle('window-minimize', () => {
-    mainWindow.minimize();
+    mainWindow.minimize();  // {
+      //   name: 'Author',
+      //   items: [
+      //     {
+      //       name: 'Guasam',
+      //       action: 'open_url',
+      //       value: 'https://github.com/guasam',
+      //       shortcut: '@guasam',
+      //     },
+      //   ],
+      // },
   });
 
   ipcMain.handle('window-maximize', () => {

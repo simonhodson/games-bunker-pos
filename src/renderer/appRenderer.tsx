@@ -4,9 +4,6 @@ import { inDev } from '@common/helpers';
 import WindowFrame from '@misc/window/components/WindowFrame';
 import Application from './views/Application';
 
-// Say something
-console.log('[ERWT] : Renderer execution started');
-
 // Application to Render
 const app = (
   <WindowFrame title='Games Bunker Pos' platform='windows'>

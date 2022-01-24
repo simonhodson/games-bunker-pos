@@ -12,6 +12,7 @@ import { GenericButton } from './components/generic-button';
 import { ActionTypes, TransactionState } from '../../ts-structures/types';
 import { Banner } from './components/banner';
 import { ReceiptWindow } from './components/receipt-window';
+import context from '../../../misc/file-service/files-service-context-api';
 
 interface IState {
     listItems: ItemData[] | [];
@@ -48,6 +49,15 @@ class Application extends React.Component<{}, IState, {}> {
     async componentDidMount(): Promise<void> {
         try {
             await getStock();
+            // INVOKE FAILING IS EGISTER METHOD WORKING???
+            context.test
+            // const c: Record<string, CallableFunction> = context;
+            // if (typeof c['test'] === 'function') {
+            //   c['test']();
+            // } else {
+            //   console.log(`action [${'test'}] is not available in titlebar context`);
+            // }
+            
         }
         catch(error) {
             console.error(String(error));
