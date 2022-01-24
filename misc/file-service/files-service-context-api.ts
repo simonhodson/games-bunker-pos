@@ -1,5 +1,5 @@
 import { FileServiceContextApi } from './file-service.context';
 
-const context: FileServiceContextApi = (window as any).electron__window.fileService;
+const fileContext: FileServiceContextApi = (window as any).file_service.fileService;
 
-export default context;
+export default fileContext;

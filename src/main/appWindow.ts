@@ -14,55 +14,55 @@ let appWindow: BrowserWindow;
  * @returns {BrowserWindow} Application Window Instance
  */
 export function createAppWindow(): BrowserWindow {
-  // Create new window instance
-  appWindow = new BrowserWindow({
-    width: 1200,
-    height: 1200,
-    minHeight: 800,
-    minWidth: 1200,
-    backgroundColor: '#1f252c',
-    show: false,
-    autoHideMenuBar: true,
-    frame: false,
-    titleBarStyle: 'hidden',
-    icon: path.resolve('assets/images/appIcon.ico'),
-    webPreferences: {
-      nodeIntegration: false,
-      nativeWindowOpen: true,
-      contextIsolation: true,
-      nodeIntegrationInWorker: false,
-      nodeIntegrationInSubFrames: false,
-      preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
-    },
-  });
+    // Create new window instance
+    appWindow = new BrowserWindow({
+        width: 1200,
+        height: 1200,
+        minHeight: 800,
+        minWidth: 1200,
+        backgroundColor: '#1f252c',
+        show: false,
+        autoHideMenuBar: true,
+        frame: false,
+        titleBarStyle: 'hidden',
+        icon: path.resolve('assets/images/appIcon.ico'),
+        webPreferences: {
+            nodeIntegration: false,
+            nativeWindowOpen: true,
+            contextIsolation: true,
+            nodeIntegrationInWorker: false,
+            nodeIntegrationInSubFrames: false,
+            preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
+        },
+    });
 
-  // Load the index.html of the app window.
-  appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
+    // Load the index.html of the app window.
+    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
 
-  // Show window when its ready to
-  appWindow.on('ready-to-show', () => appWindow.show());
+    // Show window when its ready to
+    appWindow.on('ready-to-show', () => appWindow.show());
 
-  // Register Inter Process Communication for main process
-  registerMainIPC();
+    // Register Inter Process Communication for main process
+    registerMainIPC();
 
-  // Close all windows when main window is closed
-  appWindow.on('close', () => {
-    appWindow = null;
-    app.quit();
-  });
+    // Close all windows when main window is closed
+    appWindow.on('close', () => {
+        appWindow = null;
+        app.quit();
+    });
 
-  return appWindow;
+    return appWindow;
 }
 
 /**
  * Register Inter Process Communication
  */
 function registerMainIPC() {
-  /**
-   * Here you can assign IPC related codes for the application window
-   * to Communicate asynchronously from the main process to renderer processes.
-   */
-   registerFileServicesIpc(appWindow);
+    /**
+     * Here you can assign IPC related codes for the application window
+     * to Communicate asynchronously from the main process to renderer processes.
+     */
+    registerFileServicesIpc();
     registerTitlebarIpc(appWindow);
 
 }

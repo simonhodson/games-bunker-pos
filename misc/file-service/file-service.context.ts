@@ -1,8 +1,8 @@
 import { ipcRenderer } from 'electron';
 
 const fileServiceContext = {
-  writeFile() {
-    ipcRenderer.invoke('write-file')
+  writeFile(txt: string) {
+    ipcRenderer.invoke('write-file', txt)
   },
   test() {
       console.log('PRE INVOKE ------------- >');

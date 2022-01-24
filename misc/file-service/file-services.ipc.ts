@@ -1,7 +1,7 @@
 // const fs = require('fs');
-import { BrowserWindow, ipcMain, shell } from 'electron';
+import { ipcMain, shell } from 'electron';
 
-export const registerFileServicesIpc = (mainWindow: BrowserWindow) => {
+export const registerFileServicesIpc = () => {
 
     ipcMain.handle('write-file', async  (event, arg) => {
         console.log('>>>>>>>>>>>>>>>>>>>>> ...', arg);
@@ -16,9 +16,14 @@ export const registerFileServicesIpc = (mainWindow: BrowserWindow) => {
 
 const writeFile = (): Promise<void> => {
     console.log('>>>>>>>>>>>>>>>>>>>> I AM WRITING A FILE');
-    return Promise.resolve();
+    return new Promise((res, rej) => {
+        setTimeout(() =>{
+            return res()
+        }, 3000)
+    })
+
 }
 
 const test = () => {
-    console.log(('inner test functioin'))
+    console.log('>>>>>>>>>>>> inner test function <<<<<<<<<<<<<');
 }

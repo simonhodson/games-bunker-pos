@@ -4,5 +4,9 @@ import fileServiceContext from '../file-service/file-service.context';
 
 contextBridge.exposeInMainWorld('electron_window', {
   titlebar: titlebarContext,
-  fileService: fileServiceContext
+  // fileService: fileServiceContext
 });
+
+contextBridge.exposeInMainWorld('file_service', {
+  fileService: fileServiceContext
+})
