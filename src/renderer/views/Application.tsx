@@ -144,7 +144,10 @@ class Application extends React.Component<{}, IState, {}> {
 
     onApplyDiscount = (toApply: boolean, percentage?: number): void => {
         if (!toApply) {
-            this.setState({ showDiscountWindow: false, showCompleteTransaction: true });
+            this.setState({
+                showDiscountWindow: false,
+                showCompleteTransaction: true,
+            });
             // Run next step of checkout
             return;
         }
@@ -158,6 +161,7 @@ class Application extends React.Component<{}, IState, {}> {
                 appliedDiscountValue: prevState.currentTotal - newTotal,
                 appliedDiscountPercentage: percentage,
                 showCompleteTransaction: true,
+                disableListActions: false,
             }));
             // Run next step of checkout
             return;
@@ -194,6 +198,13 @@ class Application extends React.Component<{}, IState, {}> {
                         showEditList: false,
                         showCompleteTransaction: false,
                     }));
+                } else {
+                    this.setState({
+                        willCheckout: false,
+                        showCheckout: true,
+                        showEditList: false,
+                        showCompleteTransaction: false,
+                    })
                 }
                 break;
             case 'complete':
