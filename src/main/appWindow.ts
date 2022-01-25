@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { registerTitlebarIpc } from '@misc/window/titlebarIPC';
 import { registerFileServicesIpc } from '../../misc/file-service/file-services.ipc';
+import { registerUsbServicesIpc } from './usb-service/usb-services.ipc';
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -63,6 +64,7 @@ function registerMainIPC() {
      * to Communicate asynchronously from the main process to renderer processes.
      */
     registerFileServicesIpc();
+    registerUsbServicesIpc();
     registerTitlebarIpc(appWindow);
 
 }

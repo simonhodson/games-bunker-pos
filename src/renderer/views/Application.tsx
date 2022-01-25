@@ -13,7 +13,9 @@ import { ActionTypes, TransactionState } from '../../ts-structures/types';
 import { Banner } from './components/banner';
 import { ReceiptWindow } from './components/receipt-window';
 import fileContext from '../../../misc/file-service/files-service-context-api';
+import usbContext from '../../main/usb-service/usb-service-context-api';
 import { IStockItem, IStockList } from '../../ts-structures/interfaces';
+import { HID } from 'node-hid';
 
 interface IState {
     appLoading: boolean;
@@ -53,6 +55,15 @@ class Application extends React.Component<{}, IState, {}> {
 
     async componentDidMount(): Promise<void> {
         try {
+            // Try to get scanner *****************
+            const device = await usbContext.getInputDevice();
+            device.on("data", (data: any) => {
+                console.log(`>>>>>>>>>>>>>>>>>>>>> ${data} <<<<<<<<<<<<<<<<<<<<<<<<<`)
+            });
+            device.on("error", (data: any) => {
+                console.log(`>>>>>>>>>>>>>>>>>>>>> ${data} <<<<<<<<<<<<<<<<<<<<<<<<<`)
+            })
+            // *********************
             const stockList = await getStock();
 
             if (!stockList) {
