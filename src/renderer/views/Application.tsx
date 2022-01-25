@@ -76,7 +76,7 @@ class Application extends React.Component<{}, IState, {}> {
         } catch (error) {
             console.error(`@${this.onLoaded.name}: ${String(error)}`);
         }
-        this.setState({ appLoading: false, stockArray: currentStock.data });
+        this.setState({ appLoading: false, stockArray: newStockList.data });
     }
 
     onSubmitItem = (itemId: string) => {
@@ -203,8 +203,8 @@ class Application extends React.Component<{}, IState, {}> {
                 this.resetForNewTransaction()
             }, 3000)
         } else {
-                    // RESET ALL STATE
-        this.resetForNewTransaction();
+            // RESET ALL STATE
+            this.resetForNewTransaction();
         }
 
 
@@ -240,7 +240,6 @@ class Application extends React.Component<{}, IState, {}> {
             )
         })
     }
-
 
     render() {
         return (

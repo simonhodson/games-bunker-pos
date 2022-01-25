@@ -25,7 +25,7 @@ export const InputWindow: React.FC<Props> = ({ onSubmitProp }) => {
     return (
         <div className='inputWindow'>
             <form onSubmit={e => scannerOnSubmit(e)} >
-                <input onChange={(e) => handleScannerInput(e)} value={capt} />
+                <input onChange={(e) => handleScannerInput(e)} value={capt} autoFocus={true}/>
             </form>
         </div>
     )

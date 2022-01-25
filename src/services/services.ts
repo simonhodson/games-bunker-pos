@@ -47,6 +47,6 @@ export function postTransaction(order: SalesTransaction): Promise<void> {
 export function buildStockAdjustmentRecord(items: ItemData[]): any {
     const rebuild: IStockItem[] = [];
 
-    // Will create a array of object with items boiled down to quntaties
+    // Will create a array of object with items boiled down to quantities
     return items;
 }
