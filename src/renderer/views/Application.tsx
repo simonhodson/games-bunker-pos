@@ -13,6 +13,7 @@ import { ActionTypes, TransactionState } from '../../ts-structures/types';
 import { Banner } from './components/banner';
 import { ReceiptWindow } from './components/receipt-window';
 import fileContext from '../../../misc/file-service/files-service-context-api';
+import { IStockItem, IStockList } from '../../ts-structures/interfaces';
 
 interface IState {
     appLoading: boolean;
@@ -26,6 +27,7 @@ interface IState {
     appliedDiscountPercentage: number | null;
     showReceipt: boolean;
     transactionState: TransactionState;
+    stockArray: IStockItem[];
 }
 
 class Application extends React.Component<{}, IState, {}> {
@@ -44,6 +46,7 @@ class Application extends React.Component<{}, IState, {}> {
             appliedDiscountPercentage: null,
             showReceipt: false,
             transactionState: 'pending',
+            stockArray: []
         }
         this.renderListItem = this.renderListItem.bind(this);
     }
@@ -51,12 +54,13 @@ class Application extends React.Component<{}, IState, {}> {
     async componentDidMount(): Promise<void> {
         try {
             const stockList = await getStock();
-            // TODO If not stock list, raise and error to update.
+
             if (!stockList) {
+                // TODO If not stock list, raise and error to update.
                 console.log('STOCK LIST NOT AVAILABLE');
             } else {
                 await fileContext.writeStockFile(stockList);
-                this.onLoaded(); 
+                this.onLoaded(stockList); 
             }
         }
         catch(error) {
@@ -64,8 +68,15 @@ class Application extends React.Component<{}, IState, {}> {
         }
     }
 
-    onLoaded = () => {
-        this.setState({ appLoading: false });
+    onLoaded = async (newStockList: IStockList) => {
+        let currentStock: IStockList | null = null;
+
+        try {
+            currentStock = await fileContext.readStockFile();
+        } catch (error) {
+            console.error(`@${this.onLoaded.name}: ${String(error)}`);
+        }
+        this.setState({ appLoading: false, stockArray: currentStock.data });
     }
 
     onSubmitItem = (itemId: string) => {
@@ -75,7 +86,7 @@ class Application extends React.Component<{}, IState, {}> {
         // Consider making an object holding all the required data for an item on it's return;
         // API to use item number to get back item data
 
-            const newRawItem = getStockItem(itemId);
+            const newRawItem = this.state.stockArray.find(i => i.uuid === itemId);
             if (!newRawItem) return; // <--- Add display result here
 
             const itemData: ItemData = new ItemData(
